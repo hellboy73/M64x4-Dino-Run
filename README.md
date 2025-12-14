@@ -6,3 +6,13 @@ I tried to develop a fairly faithful port of the original game, taking into cons
 You can use the NoExp version to check out the game graphics and basic mechanics on a bare Minimal 64x4 with a keyboard or an emulator, but I highly recommend playing the full version on real hardware using a joystick and, preferably, a CRT monitor.
 
 Please note that this software will only work on revision 1.1 of the Minimal 64x4, as revision 1.4 Redux is not software backward-compatible.
+
+Game requirements:
+- Joystick
+- Minimal 64x4 computer by Slu4 (v1.1 only) https://github.com/slu4coder/Minimal-64x4-Home-Computer 
+- Expansion card by Hans61 https://github.com/hans61/Minimal-64x4-Expansion
+
+Change log:
+
+2025.12.13 v0.9 initial working preview version (no sound, no expansion) emulator friendly.
+
