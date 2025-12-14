@@ -2,7 +2,7 @@
 ;   *** MINIMAL DINO RUN is an endless runner based on Google's Chrome "Dinosaur Game"       ***
 ; 	*** original game created by Sebastien Gabriel, Alan Bettes, and Edward Jung in 2014     *** 
 ;   *** Adapted to Minimal 64x4 assembly by Mateusz Matysiak (Hellboy73) December 2025       ***
-;	*** Software repository: https://github.com/hellboy73                                    ***
+;	*** Software repository: https://github.com/hellboy73/M64x4-Dino-Run                     ***
 ;   *** Game requires: Joystick                                                              ***
 ;   *** Minimal64x4 computer by Slu4 https://github.com/slu4coder/Minimal-64x4-Home-Computer ***
 ;   *** Expansion card by Hans61 https://github.com/hans61/Minimal-64x4-Expansion            ***
@@ -41,7 +41,6 @@ init:
 		MIW 0x45a1 _RandomState						; initiate pseudo-random generator
 		MIW 0xf32d _RandomState+2
 		JPS _ClearVRAM                              ; clear screen
-;		JPS init_pattern						; <<<<<<<<<<<<<<<<< delete in final release
 		JPS init_speedcopy
 													; draw initial screen
 		MIB 1 _dino_state							; dino still
@@ -55,7 +54,7 @@ init:
 		MIZ  9 _YPos MIZ 17 _XPos JPS _Print   "MINIMAL DINO RUN" 0
 		MIZ 11 _YPos MIZ 16 _XPos JPS _Print  "push fire to start" 0
 		JPS Wait_fire
-		JPS HiScore
+	;	JPS HiScore
 start:												; initialize all the game variables before game starts 
 		CLB _qpressed	CLB _up CLB _down	CLB _pressed CLB _released
 		MIB 0 	_game_level
@@ -64,9 +63,9 @@ start:												; initialize all the game variables before game starts
 		MIB 3 	_game_speed
 		MIB 1 	_dino_state
 		MIB 0 	_dino_jump_stage	
-		MIB 60 	_enemy1_countdown
+		MIB 55	_enemy1_countdown
 		MIB 0 	_enemy1_x_pos	
-		MIB 100	_enemy2_countdown
+		MIB 93	_enemy2_countdown
 		MIB 0 	_enemy2_x_pos	
 
 		JPA action_loop
@@ -78,7 +77,7 @@ game_over:
 		MIZ 11 _YPos MIZ 26-9 _XPos JPS _Print "G A M E  O V E R" 0		; game over message
 		JPS HiScore														; caclulate and display hiscore
 		JPS Wait_a_sec													; wait one second
-		INK	CLB _qpressed	CLB _up CLB _down	CLB _pressed CLB _released	; <<<<<<<<<<< to tylko dlatego ze mam gowniana obsługe klawiatury 
+		INK	CLB _qpressed	CLB _up CLB _down	CLB _pressed CLB _released	; <<<<<<<<<<< delete after implementig joystick 
 		JPS Wait_fire													; wait for fire pressed
 		JPA	start
 
@@ -86,25 +85,26 @@ game_over:
 ;   *** Main game action loop         ***
 ;   *************************************
 action_loop:
-		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame ;JPS WaitFrame JPS WaitFrame JPS WaitFrame 	;	top raster wait and detection
-			JPS readJoystickAndKeys
-		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame ;JPS WaitFrame JPS WaitFrame JPS WaitFrame 	;	top raster wait and detection	
-			JPS readJoystickAndKeys
-		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame ;JPS WaitFrame JPS WaitFrame JPS WaitFrame 	;	top raster wait and detection	
-			JPS readJoystickAndKeys
+		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame ;	top raster wait and detection
+		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame 
+		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame 
 		JPS WaitFrame JPS WaitFrame 
-
 		JPS clear_buffer
 			JPS readJoystickAndKeys
 		JPS Animate_sprites
+			JPS readJoystickAndKeys
 		JPS Control_section
 		JPS Calculate_dino_pos
 		JPS Draw_Moon			
+			JPS readJoystickAndKeys
 		JPS Draw_Cloud	
+			JPS readJoystickAndKeys
 		JPS Animate_ground
 		JPS Draw_Ground
+			JPS readJoystickAndKeys
 		JPS	Enemy1
 		JPS Enemy2
+			JPS readJoystickAndKeys
 		JPS Collision_detection					; if collision detected set _dino_state to 5 (dead) 
 		JPS Draw_Dino
 		JPS Score
@@ -122,7 +122,7 @@ Wait_fire:			; *** wait fire press and do the blinking if dino is still
 					; *** at the same time run randomizer
 					; ******************
 		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame 	;	top raster wait and detection
-		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame 	;	top raster wait and detection
+		JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame JPS WaitFrame 
 		JAS _Random											; roll the dice 
 		LDB _dino_state 	CPI 1	BNE Wf_key_read			; is Dino in still state? beginning of game and do blinking
 
@@ -203,7 +203,7 @@ Score:					;* calculating and displaying game scores, always increase by 1 point
 			JPS _Print
 			_score_string:		"00000" 0 
 			RTS
-	level_disp:									;<<<<<<<<< for troubleshooting only, delete for final release
+	level_disp:									;<<<<<<<<< for troubleshooting only, disable in final release
 			MIZ 6 _YPos MIZ 7 _XPos 
 			JPS _Print  "Lvl:" 0 LDB _game_level JAS _PrintHex
 			JPS _Print " Spd:" 0 LDB _game_speed JAS _PrintHex
@@ -338,11 +338,11 @@ Calculate_dino_pos:		;* Setting dino sprite variables:
 						;* input: 	_dino_state: 1-still 2-runs 3-jumps 4-ducks 5-dead
 						;* uses: 	Z3	dino_jump_y_coords
 						;******************
-		LDB	_dino_state CPI 3 BEQ cdp_jumps						;is he jumping? continue jumping and exit
-		LDB _dino_state CPI 4 BEQ cdp_ducks						;is he ducking? set ducking params
-		LDB _dino_state CPI 2 BEQ cdp_runs						;is he running? set running params
-		LDB _dino_state CPI 1 BEQ cdp_still						;is he still? set still params
-	cdp_dead:													;if none of above, he must be dead
+		LDB	_dino_state CPI 3 BEQ cdp_jumps						; is he jumping? continue jumping and exit
+		LDB _dino_state CPI 4 BEQ cdp_ducks						; is he ducking? set ducking params
+		LDB _dino_state CPI 2 BEQ cdp_runs						; is he running? set running params
+		LDB _dino_state CPI 1 BEQ cdp_still						; is he still? set still params
+	cdp_dead:													; if none of above, he must be dead
 			MIB 22 _dino_height		MIB 3 _dino_width			; populating sprite size	
 			MBB Dino_dead_ptr		_dino_sprite_pointer		; populating pointers for dead
 			MBB Dino_dead_ptr+1 	_dino_sprite_pointer+1		
@@ -371,7 +371,7 @@ Calculate_dino_pos:		;* Setting dino sprite variables:
 			LDB _dino_jump_stage	LAB dino_jump_y_coords 		; read y cord for this stage of jump
 			STB _dino_y_top		STZ Z3		INZ Z3				; populate Y coords	,set loop counter in Z3
 			LDB _dino_y_top		ADI 15 	STB _dino_y_bottom		; calculate Y coords for collision detection (ADI 22)
-			MIW	Buffer+1			_dino_pos_pointer						; top position y=0 
+			MIW	Buffer+1			_dino_pos_pointer			; top position y=0 
 		multipl_loop:	DEZ Z3	BEQ multipl_exit				; populate _dino_pos_pointer by multiplying y coord by 64 
 						AIW 64	_dino_pos_pointer	JPA multipl_loop
 		multipl_exit:
@@ -388,7 +388,7 @@ Calculate_dino_pos:		;* Setting dino sprite variables:
 			RTS
 	cdp_ducks:
 			MIB 13 _dino_height		MIB 4 _dino_width			; populating sprite size	
-			MBB Dino_ducks_ptr		_dino_sprite_pointer		; populating pointers for dead
+			MBB Dino_ducks_ptr		_dino_sprite_pointer		; populating pointers for dead dino
 			MBB Dino_ducks_ptr+1 	_dino_sprite_pointer+1		
 			MIW Buffer+2881+576		_dino_pos_pointer			; populating sprite position	
 			MIW Buffer+2881 		_dino_prev_pointer			; keep this pointer for dead dino
@@ -626,14 +626,6 @@ _enemy2_y_bottom:		0		; for collision detection
 _enemy2_buffer_pointer:	0x0000	; buffer for sprite scrolling at Buffer-1600	
 _enemy2_index:			0		; index of currently running enemy , to be randomized each enemy starts its run
 
-;#page				;* enemies data tables (index to be randomized each enemy starts its run)
-enemies_ptr_lsb:	<Ptero_ptr	<Ptero_ptr	<Ptero_ptr	<Ptero_ptr	<Cactb1_ptr	<Cactb2_ptr	<Cacts1_ptr	<Cacts2_ptr	<Cacts3_ptr	<Cacts1_ptr	<Cactb1_ptr	<Cactb2_ptr	<Cacts1_ptr	<Cacts2_ptr	<Cacts3_ptr	<Cacts1_ptr										
-enemies_ptr_msb:	>Ptero_ptr	>Ptero_ptr	>Ptero_ptr	>Ptero_ptr	>Cactb1_ptr	>Cactb2_ptr	>Cacts1_ptr	>Cacts2_ptr	>Cacts3_ptr	>Cacts1_ptr	>Cactb1_ptr	>Cactb2_ptr	>Cacts1_ptr	>Cacts2_ptr	>Cacts3_ptr	>Cacts1_ptr										
-enemies_height:		18			18			18			18			24			24			17			17			17			17			24			24			17			17			17			17										
-enemies_width:		3			3			3			3			2			4			2			3			4			2			2			4			2			3			4			2										
-enemies_y_top:		12			32			45			32			67-24		67-24		67-17		67-17		67-17		67-17		67-24		67-24		67-17		67-17		67-17		67-17										
-enemies_y_bottom:	12+18		32+18		45+18		32+18		67			67			67			67			67			67			67			67			67			67			67			67	
-
 Clear_sprite_buffer:	; clears teporary sprite buffer before usage
 		CLL Buffer-1600	CLL Buffer-1536	CLL Buffer-1472	CLL Buffer-1408	CLL Buffer-1344
 		CLL Buffer-1280	CLL Buffer-1216	CLL Buffer-1152	CLL Buffer-1088	CLL Buffer-1024
@@ -704,7 +696,7 @@ _moon_scroll_counter:		1
 _scroll_moon_by:			8
 _moon_sprite_pointer:		0x0000
 _moon_pos_pointer:			0x0000
-_moon_master_pos_pointer:	Buffer+419-40-64
+_moon_master_pos_pointer:	Buffer+315
 _moon_x_bytes:				35
 _moon_speed: 				14								; initial speed /frames per pixel
 
@@ -857,6 +849,7 @@ WaitFrame:
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
+	JPS readJoystickAndKeys
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
 	NOP NOP NOP NOP NOP NOP NOP NOP 	NOP NOP NOP NOP NOP NOP NOP NOP 
@@ -876,6 +869,14 @@ WaitFrame:
 dino_jump_y_coords:		; 45 normal dino running y coordinate 
 						; 0  top of playfield cordinate
 	41	36	32	28	24	21	17	15	12	10	7	6	4	3	2	1	0	0 	0 	0	0	1	2	3	4	6	7	10	12	15	17	21	24	28	32	36	41	45	0xFF 0xff
+
+						;* enemies data tables (index to be randomized each enemy starts its run)
+enemies_ptr_lsb:	<Ptero_ptr	<Ptero_ptr	<Ptero_ptr	<Ptero_ptr	<Cactb1_ptr	<Cactb2_ptr	<Cacts1_ptr	<Cacts2_ptr	<Cacts3_ptr	<Cacts1_ptr	<Cactb1_ptr	<Cactb2_ptr	<Cacts1_ptr	<Cacts2_ptr	<Cacts3_ptr	<Cacts1_ptr										
+enemies_ptr_msb:	>Ptero_ptr	>Ptero_ptr	>Ptero_ptr	>Ptero_ptr	>Cactb1_ptr	>Cactb2_ptr	>Cacts1_ptr	>Cacts2_ptr	>Cacts3_ptr	>Cacts1_ptr	>Cactb1_ptr	>Cactb2_ptr	>Cacts1_ptr	>Cacts2_ptr	>Cacts3_ptr	>Cacts1_ptr										
+enemies_height:		18			18			18			18			24			24			17			17			17			17			24			24			17			17			17			17										
+enemies_width:		3			3			3			3			2			4			2			3			4			2			2			4			2			3			4			2										
+enemies_y_top:		12			32			45			32			67-24		67-24		67-17		67-17		67-17		67-17		67-24		67-24		67-17		67-17		67-17		67-17										
+enemies_y_bottom:	12+18		32+18		45+18		32+18		67			67			67			67			67			67			67			67			67			67			67			67	
 
 ;   *************************************
 ;   *** Sprite pointers               ***
@@ -1040,7 +1041,7 @@ init_speedcopy:  		; *** initializes speed code for copying game screen buffer t
         LDI >Playfield	STZ zp_ptr_D+1
 		LDI <Buffer 	STZ zp_ptr_S			; populate pointers
         LDI >Buffer		STZ zp_ptr_S+1
-		MIZ 69 Z7								; 67 lines to copy
+		MIZ 67 Z7								; 67 lines to copy
 	is_loop1:									; outer loop (69 rows) 
 			MIZ 36 Z6							; 36 bytes in one row 
 			is_loop2:							; inner loop (36 bytes in a row)
