@@ -19,3 +19,8 @@ Limitations and shortcuts taken:
 Change log:
 - 2025.12.13 v0.9 Initial working emulator firendly preview (no sound, no expansion needed, keyboard controlled).
 - 2025.12.17 v1.0 Full version with frame exact animations and joystick support (no sound)
+
+<img width="800" height="618" alt="IMG_0940" src="https://github.com/user-attachments/assets/0b685f33-87b2-4e20-bcf4-0ac0836859df" />
+
+<img width="800" height="1067" alt="IMG_0938" src="https://github.com/user-attachments/assets/2edd370f-09bb-4f27-8696-96b3feb65667" />
+
