@@ -165,13 +165,7 @@ Score:					;* calculating and displaying game scores, always increase by 1 point
 			MIZ 6 _YPos MIZ 38 _XPos 
 			JPS _Print
 			_score_string:		"00000" 0 
-			RTS
-	level_disp:									;<<<<<<<<< for troubleshooting only, disable in final release
-			MIZ 6 _YPos MIZ 7 _XPos 
-			JPS _Print  "Lvl:" 0 LDB _game_level JAS _PrintHex
-			JPS _Print " Spd:" 0 LDB _game_speed JAS _PrintHex
-			JPA score_exit
-score_exit:
+	score_exit:
 			RTS
 
 _score_counter:	1			; how many frames till a point? variable set by score procedure
