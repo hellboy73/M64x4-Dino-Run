@@ -11,15 +11,15 @@ Game requirements:
 - Expansion board by Hans61 https://github.com/hans61/Minimal-64x4-Expansion
 
 Limitations and shortcuts taken:
-- No sound implemented
 - Every jump is a high jump 
 - Pteros fly at the same speed as the ground (should fly faster)
 - Please note that this software will only work on revision 1.1 of the Minimal 64x4, as revision 1.4 Redux is not software backward-compatible.
 
 Change log:
 - 2025.12.13 v0.9 Initial working emulator firendly preview (no sound, no expansion needed, keyboard controlled).
-- 2025.12.17 v1.0 Full version with frame exact animations and joystick support (no sound)
-
+- 2025.12.17 v1.0 Full version with frame exact animations and joystick support (no sound).
+- 2025.12.26 v1.1 Full version with frame exact animations, joystick support and sound.
+  
 <img width="800" height="618" alt="IMG_0940" src="https://github.com/user-attachments/assets/0b685f33-87b2-4e20-bcf4-0ac0836859df" />
 
 <img width="800" height="1067" alt="IMG_0938" src="https://github.com/user-attachments/assets/2edd370f-09bb-4f27-8696-96b3feb65667" />
