@@ -872,7 +872,7 @@ wait_frames:	; * waiting 'A' number of frames
 wf_counter: 0
 
 				; ******************
-waitVsync:  	; * waiting for VSync; 
+waitVsync:		; * waiting for VSync; 
 				; * routine copied directly from GitHub hans61
 				; ******************
 				LDB vsync	ANI 0x40	CPI 0x00	BEQ waitVsync   ; wait until high
@@ -880,7 +880,7 @@ waitVsync:  	; * waiting for VSync;
 				RTS
 
 				; ******************
-wrSN76489: 		; * write A to SN76489 
+wrSN76489:		; * write A to SN76489 
 				; * routine copied directly from GitHub hans61
 				; ******************
 				STB sn76489
@@ -890,7 +890,7 @@ wrSN76489: 		; * write A to SN76489
 				RTS
 
 					; ******************
-init_speedcopy: 	; *** initializes speed code for copying game screen buffer to playfield
+init_speedcopy:		; *** initializes speed code for copying game screen buffer to playfield
 					; *** this code will reside under 0xbe00 and takes over 12kB but runs in 2.6 ms
 					; ******************
 		LDI <SpeedCopy	STZ Z8
@@ -1088,11 +1088,11 @@ gnd_pattern_msb:	; MSBs for ground pattern (256 bytes)
 ;	* Audio data section				
 ;	* tone_byte1	tone_byte2 	volume_byte		frames (ff marking end of tune)	
 ;   *****************************************************************
-audio_jump:		0x8f	0x0d	0x90	0x03	;channel 1 tune
-				0x8f	0x0d	0x9f 	0xff	
-audio_level_up:	0xaf	0x0e	0xb0	0x02	;channel 2 tune
-				0xaf	0x03	0xb0	0x0e	
-				0xaf	0x03	0xbf	0xff	
+audio_jump:		0x80	0x0e	0x90	0x03	;channel 1 tune
+				0x80	0x0e	0x9f 	0xff	
+audio_level_up:	0xa0	0x0e	0xb0	0x02	;channel 2 tune
+				0xac	0x08	0xb0	0x0e	
+				0xac	0x08	0xbf	0xff	
 audio_dead:		0xcf	0x3f	0xd0	0x02	;channel 3 tune
 				0xcf	0x3f	0xdf	0x02	
 				0xcf	0x3f	0xd0	0x05	
